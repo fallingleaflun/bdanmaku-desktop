@@ -18,5 +18,5 @@ https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=改成你�
 1. 下载exe
 2. 安装，直到安装界面消失，任务栏有个窗口图标但是整个windows窗口是透明的
 3. 关掉安装界面，关不掉就去任务管理器kill掉
-4. 和使用方法1的一样去，配置文件填好参数改名并放到`C盘用户目录/AppData/Local/bdanmaku_desktop/app-1.0.0/config.ini`
+4. 和使用方法1一样获取参数，配置文件填好参数改名并放到`C盘用户目录/AppData/Local/bdanmaku_desktop/app-1.0.0/config.ini`
 5. 启动exe
