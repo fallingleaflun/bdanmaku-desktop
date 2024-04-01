@@ -1,4 +1,11 @@
 [DEFAULT]
+UID = 你的UID
+ROOMID = 直播间ID
+BUVID2 = F12控制台-application-cookie里面的buvid3
+BUVID3 = F12控制台-application-cookie里面的buvid3
+KEY  = 访问链接得到的token
+
+[SAMPLE]
 UID = 13195272
 ROOMID = 25034104
 BUVID2 = E03DBaC6-05D1-4C28-B322-665F4954C0B2a7583infoc
