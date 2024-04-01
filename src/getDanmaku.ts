@@ -2,21 +2,33 @@ import ini from 'ini';
 import fs from 'fs';
 import { LiveTCP, getConf } from 'bilibili-live-ws';
 import { MSGBase, NormalMSG } from './parseMSG';
+import path from 'path';
+import { app } from 'electron';
+import log from 'electron-log';
 
 export async function getDanmaku(messageList: MSGBase[]): Promise<LiveTCP> {
     // 读取SESSDATA并创建一个axios实例
-    const config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'))
+    
+    // 打包后使用exe路径
+    // const exeDir = path.dirname(app.getPath('exe'));
+    // const configFilePath = path.join(exeDir, 'config.ini');
+    // console.log(`log path: ${app.getPath('logs')}`)
+    // log.info(`config file path: ${configFilePath}`)
+    
+    // 测试用本地路径
+    const configFilePath ='./config.ini'
+    
+    const config = ini.parse(fs.readFileSync(configFilePath, 'utf-8'))
     const ROOMID = Number(config.DEFAULT.ROOMID) as number
     const UID = Number(config.DEFAULT.UID) as number
     const BUVID = config.DEFAULT.BUVID2 as string
     const KEY = config.DEFAULT.KEY as string
 
-
     try {
         const conf = await getConf(ROOMID)
-        console.log(`address: ${conf.address}`)
-        console.log(`key:${conf.key}`)
-        console.log(`host:${conf.host}`)
+        log.info(`address: ${conf.address}`)
+        log.info(`key:${conf.key}`)
+        log.info(`host:${conf.host}`)
         const liveClient = new LiveTCP(ROOMID, {
             uid: UID,
             key: KEY,
@@ -27,31 +39,31 @@ export async function getDanmaku(messageList: MSGBase[]): Promise<LiveTCP> {
             //   SESSDATA: store.get('SESSDATA') as string,
             // },
         })
-        liveClient.on('open', () => console.log('Connection is established'))
+        liveClient.on('open', () => log.info('Connection is established'))
 
         // Connection is established
         liveClient.on('liveClient', () => {
-            liveClient.on('heartbeat', console.log)
+            liveClient.on('heartbeat', log.info)
         })
 
         liveClient.on('DANMU_MSG', (data: any) => {
-            // console.log("DANMU_MSG data received")
+            // log("DANMU_MSG data received")
             const normalMSG = new NormalMSG(data)
             messageList.push(normalMSG)
-            // console.log(data)
+            // log(data)
         })
 
         liveClient.on('SUPER_CHAT_MESSAGE_JPN', (data: any) => {
-            // console.log("SUPER_CHAT_MESSAGE_JPN data received")
-            // console.log(data)
+            // log("SUPER_CHAT_MESSAGE_JPN data received")
+            // log(data)
         })
 
         liveClient.on('SUPER_CHAT_MESSAGE', (data: any) => {
-            // console.log("SUPER_CHAT_MESSAGE data received")
-            // console.log(data)
+            // log("SUPER_CHAT_MESSAGE data received")
+            // log(data)
         })
-        
-        liveClient.on('close', () => console.log('Connection is closed'))
+
+        liveClient.on('close', () => log.info('Connection is closed'))
         return liveClient
     }
     catch (e) {

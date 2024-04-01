@@ -43,6 +43,7 @@
   "license": "MIT",
   "dependencies": {
     "bilibili-live-ws": "^6.3.1",
+    "electron-log": "^5.1.2",
     "electron-squirrel-startup": "^1.0.0",
     "ini": "^4.1.2"
   }
