@@ -15,6 +15,9 @@ let liveClient: LiveTCP | null = null
 let messageList: MSGBase[] = []
 let sendInterval: NodeJS.Timeout | null = null
 const INTERVAL = 1000 // 刷新列表到渲染进程的间隔
+let ignoreMouseEvents = true // 是否忽略鼠标事件
+let isResizable = false // 是否可以调整窗口大小
+let isMaximized = false // 是否最大化
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -32,8 +35,48 @@ const createWindow = (): void => {
     alwaysOnTop: true,
   });
 
+  tray = new Tray(nativeImage.createFromPath('./src/assets/icon.png'))
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '更改大小', click: () => {
+        isResizable = !isResizable
+        mainWindow?.setResizable(isResizable)
+        if(isResizable){
+          mainWindow?.unmaximize()
+          mainWindow?.setSize(400, 400)
+        }
+        else{
+          mainWindow?.maximize()
+        }
+        console.log(`isResizable: ${isResizable}`)
+        console.log(`realIsResizable${mainWindow?.isResizable()}`)
+      }
+    },
+    {
+      label: '最大化', click: () => {
+        isMaximized = !isMaximized
+        if(!isMaximized){
+          mainWindow?.unmaximize()
+        }
+        else{
+          mainWindow?.maximize()
+        }
+        console.log(`isResizable: ${isResizable}`)
+        console.log(`realIsResizable: ${mainWindow?.isResizable()}`)
+      }
+    },
+    {
+      label: '忽略鼠标', click: () => {
+        ignoreMouseEvents = !ignoreMouseEvents
+        mainWindow?.setIgnoreMouseEvents(ignoreMouseEvents)
+        console.log(`ignoreMouseEvents: ${ignoreMouseEvents}`)
+      }
+    }
+  ])
+  tray.setContextMenu(contextMenu);
+
   mainWindow.maximize();
-  mainWindow.setIgnoreMouseEvents(true)
+  mainWindow.setIgnoreMouseEvents(true);
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -94,5 +137,6 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+app.on('before-quit', () => {
+  tray.destroy();
+});
