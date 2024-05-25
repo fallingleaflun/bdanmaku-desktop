@@ -33,7 +33,9 @@ import Danmaku from './danmaku';
 declare global {
     interface Window {
         api: {
-            receiveMessageList: (callback: any) => void
+            receiveMessageList: (callback: any) => void,
+            showArea: (callback: any) => void,
+            hideArea: (callback: any) => void,
         }
     }
 }
@@ -42,6 +44,7 @@ declare global {
 const danmaku = new Danmaku({
     container: document.getElementById('danmaku-container')
 });
+const overlay = document.getElementById('overlay') as HTMLDivElement;
 
 window.api.receiveMessageList((messageList: MSGBase[]) => {
     messageList.forEach((msg) => {
@@ -56,3 +59,15 @@ window.api.receiveMessageList((messageList: MSGBase[]) => {
         });
     })
 })
+
+window.api.showArea(
+    () => {
+        overlay.style.visibility = 'visible';
+    }
+)
+
+window.api.hideArea(
+    () => {
+        overlay.style.visibility = 'hidden';
+    }
+)

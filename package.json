@@ -1,7 +1,7 @@
 {
   "name": "bdanmaku-desktop",
   "productName": "bdanmaku-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
@@ -25,6 +25,7 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^6.10.0",
     "electron": "29.1.6",
     "eslint": "^8.57.0",
@@ -43,6 +44,7 @@
   "license": "MIT",
   "dependencies": {
     "bilibili-live-ws": "^6.3.1",
+    "depcheck": "^1.4.7",
     "electron-log": "^5.1.2",
     "electron-squirrel-startup": "^1.0.0",
     "ini": "^4.1.2"
