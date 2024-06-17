@@ -12,7 +12,7 @@ if (app.isPackaged) {
     log.info(`config file path: ${configFilePath}`)
 }
 else {
-    configFilePath = './configa.ini'
+    configFilePath = './config.ini'
 }
 
 const configExists = fs.existsSync(configFilePath)

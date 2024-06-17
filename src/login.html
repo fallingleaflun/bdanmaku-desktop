@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+  <div id=container>
+    <h2>请输入房间号，然后扫码登录</br>登录完成后窗口会自动关闭</h2>
+    <div id="inputRoomIDDiv">
+      <input id="roomIDInput" placeholder="请输入房间号" value="5424" />
+      <button id="confirmBtn">确认</button>
+    </div>
+    <canvas id="qrcodeCanvas"></canvas>
+  </div>
+</body>
+<!-- <script src="./loginRenderer.js"></script> -->
+<style>
+  #container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #inputRoomIDDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  #roomIDInput {
+    font-size: 25px;
+    font-family: "Microsoft YaHei";
+  }
+
+  #confirmBtn {
+    font-size: 25px;
+    font-family: "Microsoft YaHei";
+  }
+
+  #qrcodeCanvas {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+
+</html>

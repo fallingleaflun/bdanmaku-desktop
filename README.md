@@ -12,7 +12,6 @@
 2. 访问下列链接，获取token作为config.ini的KEY
 https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=改成你要看的直播间ID
 3. 打开控制台获取buvid3作为config.ini的BUVID
-- 托盘
 ### 使用方法2
 - 用electron forge打了个exe，姑且这样用吧
 1. 去下载exe
@@ -22,3 +21,5 @@ https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=改成你�
 2. 访问下列链接，获取token作为config.ini的KEY
 https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=改成你要看的直播间ID
 1. 打开控制台获取buvid3作为config.ini的BUVID
+### 使用方法3
+1. 在托盘里面点击“登录并选择直播间”的菜单，然后输入要看的直播间，确认后扫码登录，登录成功会自动关闭窗口，可以直接观看

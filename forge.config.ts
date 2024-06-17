@@ -21,6 +21,7 @@ const config: ForgeConfig = {
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
       mainConfig,
+      "devContentSecurityPolicy": "connect-src 'self' https://passport.bilibili.com https://api.bilibili.com https://api.live.bilibili.com 'unsafe-eval'", 
       renderer: {
         config: rendererConfig,
         entryPoints: [
@@ -31,6 +32,14 @@ const config: ForgeConfig = {
             preload: {
               js: './src/preload.ts',
             },
+          },
+          {
+            html: './src/login.html',
+            js: './src/loginRenderer.ts',
+            name: 'login_window',
+            preload: {
+              js: './src/loginPreload.ts',
+            }
           },
         ],
       },
