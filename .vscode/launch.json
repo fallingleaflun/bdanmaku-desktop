@@ -19,6 +19,20 @@
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal"
-        }
+        },
+        {
+            "name": "Debug Main Process",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge",
+            "windows": {
+              "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge.cmd"
+            },
+            "args" : ["start"],
+            "protocol": "inspector",
+            "console": "integratedTerminal",
+            "outputCapture": "std"
+          }
     ]
 }

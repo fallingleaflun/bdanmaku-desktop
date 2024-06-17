@@ -15,5 +15,5 @@
       "*": ["node_modules/*"]
     }
   },
-  "include": ["src/**/*", "src/danmaku.min.js"]
+  "include": ["src/**/*", "src/danmaku.min.js", "dist/danmaku.js"]
 }

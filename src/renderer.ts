@@ -29,6 +29,11 @@
 import './index.css';
 import { MSGBase } from './parseMSG';
 import Danmaku from './danmaku';
+import log from 'electron-log';
+
+// 渲染进程初始化日志
+log.initialize();
+log.info('Logger initialized in renderer process');
 
 declare global {
     interface Window {

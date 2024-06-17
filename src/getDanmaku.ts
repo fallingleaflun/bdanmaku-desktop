@@ -3,27 +3,42 @@ import { MSGBase, NormalMSG } from './parseMSG';
 import appConfig from './config';
 
 import log from 'electron-log';
+import { SessionData } from './updateSession';
 
-export async function getDanmaku(messageList: MSGBase[]): Promise<LiveTCP> {
+export async function getDanmaku(messageList: MSGBase[], sess: SessionData): Promise<LiveTCP> {
     // 读取SESSDATA并创建一个axios实例
     try {
-        const conf = await getConf(appConfig.ROOMID)
-        log.info(`address: ${conf.address}`)
-        log.info(`key:${conf.key}`)
-        log.info(`host:${conf.host}`)
-        const liveClient = new LiveTCP(
-            appConfig.ROOMID,
-            {
-                uid: appConfig.UID,
-                key: appConfig.KEY,
-                buvid: appConfig.BUVID,
-                protover: 3,
-                // authBody: {
-                //   csrf: store.get('csrf') as string,
-                //   SESSDATA: store.get('SESSDATA') as string,
-                // },
-            }
-        )
+        let liveClient: LiveTCP
+        if (sess) {
+            liveClient = new LiveTCP(
+                Number(sess['roomid']),
+                {
+                    uid: Number(sess['uid']),
+                    key: sess['key'],
+                    buvid: sess['buvid'],
+                    protover: 3,
+                }
+            )
+        }
+        else {
+            const conf = await getConf(appConfig.ROOMID)
+            log.info(`address: ${conf.address}`)
+            log.info(`key:${conf.key}`)
+            log.info(`host:${conf.host}`)
+            liveClient = new LiveTCP(
+                appConfig.ROOMID,
+                {
+                    uid: appConfig.UID,
+                    key: appConfig.KEY,
+                    buvid: appConfig.BUVID,
+                    protover: 3,
+                    // authBody: {
+                    //   csrf: store.get('csrf') as string,
+                    //   SESSDATA: store.get('SESSDATA') as string,
+                    // },
+                }
+            )
+        }
         liveClient.on('open', () => log.info('Connection is established'))
 
         // Connection is established
