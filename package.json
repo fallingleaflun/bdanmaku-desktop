@@ -1,7 +1,7 @@
 {
   "name": "bdanmaku-desktop",
   "productName": "bdanmaku-desktop",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
