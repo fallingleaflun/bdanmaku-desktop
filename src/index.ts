@@ -41,6 +41,7 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      devTools: false,
     },
     transparent: true,
     frame: false,
@@ -96,12 +97,13 @@ const createWindow = (): void => {
           webPreferences: {
             nodeIntegration: true,
             webSecurity: false,
-            preload: LOGIN_WINDOW_PRELOAD_WEBPACK_ENTRY
+            preload: LOGIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+            devTools: false
           }
         })
 
         loginWindow.setMenu(null)
-        loginWindow.webContents.openDevTools()
+        // loginWindow.webContents.openDevTools()
 
         loginWindow.loadURL(LOGIN_WINDOW_WEBPACK_ENTRY)
 
