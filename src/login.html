@@ -2,33 +2,65 @@
 <html>
 
 <body>
-  <div id=container>
-    <h2>请输入房间号，然后扫码登录</br>登录完成后窗口会自动关闭</h2>
-    <div id="inputRoomIDDiv">
+  <div id="container">
+    <div id=loginContainer>
+      <h2>请输入直播间号，然后点击确认</br>登录完成后窗口会自动关闭</h2>
       <input id="roomIDInput" placeholder="请输入房间号" value="5424" />
-      <button id="confirmBtn">确认</button>
+      <div id="inputRoomIDDiv">
+        <div style="flex-direction: row;">
+          <button id="confirmBtn">确认</button>
+        </div>
+        <canvas id="qrcodeCanvas"></canvas>
+      </div>
     </div>
-    <canvas id="qrcodeCanvas"></canvas>
-  </div>
+    <div id="roomContiner">
+      <h2 id="currentRoomID"></h2>
+      <h2>历史直播间</h2>
+      <div id="roomTableContainer">
+        <table id="roomTable">
+          <tr>
+            <th>直播主名字</th>
+            <th>直播间号</th>
+          </tr>
+        </table>
+      </div>
+    </div>
 </body>
 <!-- <script src="./loginRenderer.js"></script> -->
 <style>
   #container {
     display: flex;
-    flex-direction: column;
     justify-content: center;
+  }
+
+  #loginContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    height: 100vh;
+    margin-right: 5px;
+  }
+
+  #roomContiner {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
     align-items: center;
     height: 100vh;
+    border-left: 1px solid black;
+    padding-left: 5px;
   }
 
   #inputRoomIDDiv {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     margin-top: 10px;
   }
 
   #roomIDInput {
+    margin-top: 5px;
     font-size: 25px;
     font-family: "Microsoft YaHei";
   }
@@ -44,6 +76,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
+    border: 1px solid black;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  th {
+    border: 1px solid black;
+    padding: 10px;
+  }
+  td {
+    border: 1px solid black;
+    padding: 10px;
   }
 </style>
 

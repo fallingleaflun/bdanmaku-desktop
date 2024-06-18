@@ -16,5 +16,11 @@ contextBridge.exposeInMainWorld(
     hideArea: (callback: any) => {
       ipcRenderer.on('hideArea', (_event) => callback())
     },
+    connectionLost: (callback: any) => {
+      ipcRenderer.on('connectionLost', (_event) => callback())
+    },
+    connectionEstablished: (callback: any) => {
+      ipcRenderer.on('connectionEstablished', (_event) => callback())
+    }
   }
 )

@@ -98,7 +98,6 @@ export class LoginQr {
         const { code, message, data } = await r.json()
         log.info(`getBuvid3 set-cookie is ${r.headers.get('set-cookie')}`)
         if (code !== 0) throw new Error(message)
-
         return data.b_3
     }
     
@@ -121,6 +120,22 @@ export class LoginQr {
         const { code, message, ttl, data } = await r.json()
         if (code !== 0) throw new Error(message)
         return data.mid
+    }
+
+    public async getRoomName(roomid: string): Promise<string> {
+        const response1 = await axios.get(`https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${roomid}`, { headers: this.header });
+        const { code, message, msg, data } = response1.data;
+        if (code !== 0) throw new Error(message);
+        log.info(`getRoomName data: ${JSON.stringify(data)}`);
+        return await this.getUname(data.uid)
+    }
+
+    private async getUname(uid: string) {
+        const response2 = await axios.get(`https://api.live.bilibili.com/live_user/v1/Master/info?uid=${uid}`, { headers: this.header });
+        const { code, msg, message, data } = response2.data;
+        if (code !== 0) throw new Error(message);
+        log.info(`getUname data: ${JSON.stringify(data)}`);
+        return data.info.uname;
     }
 
     public getKey(){

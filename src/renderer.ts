@@ -41,14 +41,17 @@ declare global {
             receiveMessageList: (callback: any) => void,
             showArea: (callback: any) => void,
             hideArea: (callback: any) => void,
+            connectionLost: (callback: any) => void,
+            connectionEstablished: (callback: any) => void,
         }
     }
 }
 
 
 const danmaku = new Danmaku({
-    container: document.getElementById('danmaku-container')
+    container: document.getElementById('danmakuContainer')
 });
+const connectionLost = document.getElementById('connectionLost') as HTMLDivElement;
 const overlay = document.getElementById('overlay') as HTMLDivElement;
 
 window.api.receiveMessageList((messageList: MSGBase[]) => {
@@ -74,5 +77,17 @@ window.api.showArea(
 window.api.hideArea(
     () => {
         overlay.style.visibility = 'hidden';
+    }
+)
+
+window.api.connectionLost(
+    () => {
+        connectionLost.style.visibility = 'visible';
+    }
+)
+
+window.api.connectionEstablished(
+    () => {
+        connectionLost.style.visibility = 'hidden';
     }
 )

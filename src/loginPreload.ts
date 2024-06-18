@@ -10,5 +10,11 @@ contextBridge.exposeInMainWorld(
     getQRcode: (roomid: string) => {
       return ipcRenderer.invoke('getQRcode', roomid)
     },
+    getRoomList: () => {
+      return ipcRenderer.invoke('getRoomList')
+    },
+    selectRoom: (roomid: string) => {
+      return ipcRenderer.invoke('selectRoom', roomid)
+    }
   }
 )

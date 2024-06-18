@@ -1,39 +1,115 @@
-import ini from 'ini';
 import fs from 'fs';
 import path from 'path';
 import { app } from 'electron';
 import log from 'electron-log';
-let configFilePath = ""
 
-// 打包后使用exe路径
-if (app.isPackaged) {
-    const exeDir = path.dirname(app.getPath('exe'));
-    configFilePath = path.join(exeDir, 'config.ini');
-    log.info(`config file path: ${configFilePath}`)
-}
-else {
-    configFilePath = './config.ini'
+export interface RoomConfig {
+    NAME: string,
+    ROOMID: number,
+    UID: number,
+    BUVID: string,
+    KEY: string
 }
 
-const configExists = fs.existsSync(configFilePath)
-if (!configExists) {
-    fs.writeFileSync(configFilePath, "", "utf-8")
+export interface AppConfig {
+    currentRoomConfig: RoomConfig,
+    roomConfigList: RoomConfig[]
 }
-const config = configExists ? ini.parse(fs.readFileSync(configFilePath, 'utf-8')) : undefined
-log.debug(`configExists: ${configExists}`)
-const appConfig = configExists ?
-    {
-        CONFIGFILEPATH: configFilePath as string,
-        ROOMID: Number(config?.DEFAULT?.ROOMID ?? 0) as number,
-        UID: Number(config?.DEFAULT?.UID ?? 0) as number,
-        BUVID: config?.DEFAULT?.BUVID2 as string ?? "invalid buvid",
-        KEY: config?.DEFAULT?.KEY as string ?? "invalid key",
-    } : {
-        CONFIGFILEPATH: configFilePath as string,
-        ROOMID: 0,
-        UID: 0,
-        BUVID: "invalid buvid",
-        KEY: "invalid key",
+
+class ConfigUtils {
+    appConfig: AppConfig
+    configFilePath: string
+
+    constructor() {
+        // 打包后使用exe路径
+        if (app.isPackaged) {
+            const exeDir = path.dirname(app.getPath('exe'));
+            this.configFilePath = path.join(exeDir, 'config.json');
+            log.info(`config file path: ${this.configFilePath}`)
+        }
+        else {
+            this.configFilePath = './config.json'
+        }
+
+        const configExists = fs.existsSync(this.configFilePath)
+        if (!configExists) {
+            this.appConfig = {
+                currentRoomConfig: {
+                    NAME: "invalid",
+                    ROOMID: 0,
+                    UID: 0,
+                    BUVID: "invalid buvid",
+                    KEY: "invalid key"
+                },
+                roomConfigList: []
+            }
+            this.writeConfig()
+        }
+        this.readConfig()
     }
 
-export default appConfig
+    public getCurrentRoomConfig(): RoomConfig {
+        return this.appConfig.currentRoomConfig
+    }
+
+    public getRoomConfigList(): RoomConfig[] {
+        return this.appConfig.roomConfigList
+    }
+
+    public setCurrentRoomConfig(roomConfig: RoomConfig) {
+        this.appConfig.currentRoomConfig = roomConfig
+        this.writeConfig()
+    }
+
+    public setRoomConfigListByNumber(roomid: number) {
+        const roomConfig = this.appConfig.roomConfigList.find((roomConfig) => roomConfig.ROOMID === roomid)
+        if (roomConfig) {
+            this.appConfig.currentRoomConfig = roomConfig
+            this.writeConfig()
+        }
+    }
+
+    public addRoomConfig(roomConfig: RoomConfig) {
+        const idx = this.appConfig.roomConfigList.findIndex((config) => config.ROOMID === roomConfig.ROOMID)
+        if (idx !== -1) {
+            this.appConfig.roomConfigList[idx] = roomConfig
+        }
+        else {
+            this.appConfig.roomConfigList.push(roomConfig)
+        }
+        this.writeConfig()
+    }
+
+    private writeConfig() {
+        const json = JSON.stringify(this.appConfig, null, 2)
+        try {
+            fs.writeFileSync(this.configFilePath, json, "utf-8")
+        }
+        catch (error) {
+            log.error(`writeConfig error: ${error}`)
+        }
+    }
+
+    private readConfig() {
+        try {
+            const json = fs.readFileSync(this.configFilePath, "utf-8")
+            this.appConfig = JSON.parse(json)
+        } catch (error) {
+            log.error(`readConfig error: ${error}`)
+            this.appConfig = {
+                currentRoomConfig: {
+                    NAME: "invalid",
+                    ROOMID: 0,
+                    UID: 0,
+                    BUVID: "invalid buvid",
+                    KEY: "invalid key"
+                },
+                roomConfigList: []
+            }
+        }
+    }
+}
+
+const configUtils = new ConfigUtils()
+
+export default configUtils

@@ -1,6 +1,8 @@
 import { LoginQr } from './loginQr'
 import log from 'electron-log'
 import { Cookie } from './cookie'
+import { RoomConfig } from './config'
+import configUtils from './config'
 
 // 协议相关
 enum PollQrResultCode {
@@ -15,18 +17,7 @@ const keepPollQrResultCode = new Set([PollQrResultCode.NOT_CONFIRMED, PollQrResu
 const USER_AGENT = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36'
 let lastUrl = '' // 上一次请求二维码的url
 let lastKey = '' // 上一次请求二维码的key
-export interface SessionData {
-    uid: string,
-    roomid: string,
-    buvid: string,
-    key: string
-}
-export let sessionData: SessionData = { // 获取弹幕所需要的参数
-    'uid': '',
-    'roomid': '',
-    'buvid': '',
-    'key': ''
-}
+
 export let finished = false // 是否已经完成参数获取
 let pollTimeout: NodeJS.Timeout | null = null
 
@@ -35,28 +26,18 @@ let pollTimeout: NodeJS.Timeout | null = null
 * @param finishCallback: 完成登录的回调函数
 */
 export async function handleGetQRcode(roomid: string, finishCallback: () => void): Promise<string> {
-    sessionData['roomid'] = roomid
     try {
-        if (!lastKey || lastKey === '') {
-            const qr = new LoginQr(USER_AGENT, lastKey)
-            log.info('try to generate qr code url')
-            const genRes = await qr.generate()
-            if (genRes.code === 0) {
-                lastKey = genRes.key
-                lastUrl = genRes.url
-                log.info('qr code url generated')
-                // 开启轮询
-                clearTimeout(pollTimeout)
-                pollUtilSuccess(qr, roomid, finishCallback)
-                return genRes.url
-            }
-        }
-        else {
-            const qr = new LoginQr(USER_AGENT, lastKey)
+        const qr = new LoginQr(USER_AGENT, lastKey)
+        log.info('try to generate qr code url')
+        const genRes = await qr.generate()
+        if (genRes.code === 0) {
+            lastKey = genRes.key
+            lastUrl = genRes.url
+            log.info('qr code url generated')
             // 开启轮询
             clearTimeout(pollTimeout)
             pollUtilSuccess(qr, roomid, finishCallback)
-            return lastUrl
+            return genRes.url
         }
     }
     catch (error) {
@@ -72,11 +53,19 @@ export async function pollUtilSuccess(qr: LoginQr, roomid: string, finishCallbac
         if (!keepPollQrResultCode.has(result.code)) {
             if (result.code === PollQrResultCode.SUCCESS) {
                 const cookie = result.cookie;
-                sessionData['buvid'] = Cookie.getValueFromCookieString(cookie, 'buvid3');
-                sessionData['key'] = await qr.getSessionKey(roomid, cookie);
-                sessionData['uid'] = await qr.getUID(cookie)
-                log.info('login success, session data:');
-                log.info(sessionData);
+                log.info(`login success, result:${result}`);
+                const newRoomConfig: RoomConfig = {
+                    NAME: await qr.getRoomName(roomid),
+                    ROOMID: Number(roomid),
+                    UID: Number(await qr.getUID(cookie)),
+                    BUVID: Cookie.getValueFromCookieString(cookie, 'buvid3'),
+                    KEY: await qr.getSessionKey(roomid, cookie)
+                }
+                // 在这里添加新的房间配置，会写入文件
+                configUtils.addRoomConfig(newRoomConfig);
+                configUtils.setCurrentRoomConfig(newRoomConfig);
+                log.info('login success, newRoomConfig data:');
+                log.info(newRoomConfig);
                 finishCallback();
             }
             else if (result.code === PollQrResultCode.EXPIRED || result.code === PollQrResultCode.NOT_CONFIRMED) {
@@ -93,6 +82,7 @@ export async function pollUtilSuccess(qr: LoginQr, roomid: string, finishCallbac
     }
     catch (error) {
         log.error(`pollUtilSuccess error: ${error}`)
+        log.error(`pollUtilSuccess error.stack: ${error.stack}`)
     }
 }
 

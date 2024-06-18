@@ -92,4 +92,5 @@ typings/
 out/
 
 config.ini
+config.json
 note.md
